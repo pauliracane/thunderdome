@@ -1,0 +1,56 @@
+#! /usr/bin/env python3
+
+import psycopg2
+import sys
+
+def main():
+    try:
+        con = psycopg2.connect(dbname = sys.argv[1])
+
+        cur = con.cursor()
+
+        print("What would you like to see?\n")
+        print("1. Longest Fight Time?")
+        print("2. Shortest Fight Time?")
+        print("3. Most expansive list of attacks?")
+        print("4. Most Wins?")
+        print("5. Most Losses?")
+        print("6. Most Draws?")
+        choice = input("")
+        
+        cur.execute("select * from fight")
+        fightfacts = cur.fetchall()
+        
+        cur.execute("select * from combatant")
+        combatantinfo = cur.fetchall()
+        timeIn = []
+        if ( choice == '1' ):
+            for x in range(0, max(combatantinfo[0][0])):
+                for each in fightfacts:
+                    print(each)
+                    if (each[0] == x + 1) or each ([1] == x + 1):
+                        timeIn[x] += each[4] - each[3]
+            print(max(timeIn))
+                        
+        elif ( choice == '2' ):
+            pass   
+        elif ( choice == '3' ):
+            pass
+        elif ( choice == '4' ):
+            pass
+        elif ( choice == '5' ):
+            pass
+        elif ( choice == '6' ):
+            pass
+
+    except:
+        pass
+
+#Prompt for input;  "What do you want to see?"
+#1. Fight time:  Longest / Shortest
+#2. Win Rate:  Highest / Lowest
+#3. Most attacks
+#4. Wins / Losses / Draws by Species
+
+if __name__ == '__main__':
+    main()
