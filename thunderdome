@@ -143,9 +143,7 @@ def main():
                 insert = ("INSERT into fight (combatant_one, combatant_two, "
                 "winner, start, finish) VALUES (%s, %s, %s,TIMESTAMP %s,TIMESTAMP %s )")
                 starttime = "1543-07-13 00:00:00"
-                print(fightTime)
                 fightTime = "1543-07-13 " + str(int(fightTime/3600)) + ":" + str(int(fightTime/60)) + ":" + str(int(fightTime%60))
-                print(fightTime+"\n")
                 q = x + 1
                 r = z + 1
                 cur.execute(insert, (( q,r,Winner, starttime, fightTime )) )
