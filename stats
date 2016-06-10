@@ -30,7 +30,7 @@ def main():
             if int(item[0]) > num:
                 num = int(item[0])
 
-        listTimeIn = [45]
+        listTimeIn = [5]
         if ( choice < '3' ):
             for x in range(0, num):
                 timeIn = 0
@@ -59,7 +59,20 @@ def main():
                         if (each[0] == x[1]):
                             print(each[1],"fought for",ShortestFighter,"seconds!")
         elif ( choice == '3' ):
-            pass
+            highestnumskills = [0, 0]
+            for each in combatantinfo:
+                cur.execute("select * from species_attack where species_id = " + str(each[0]))
+                skilllist = cur.fetchall()
+                if (len(skilllist) > highestnumskills[0]):
+                    highestnumskills[0] = each[0]
+                    highestnumskills[1] = len(skilllist)
+            
+            for each in combatantinfo:
+                if each[0] == highestnumskills[0]:
+                    print(each[1], "has the most skills available at",
+                            highestnumskills[1])
+    
+
         elif ( choice == '4' ):
             pass
         elif ( choice == '5' ):
