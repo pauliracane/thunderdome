@@ -17,6 +17,18 @@ def main():
 
         random.shuffle(fighters)
 
+        #RESET id sequence counter, such that the first combatant is
+        #always combatant 1.
+        cur.execute("DELETE from combatant")
+        cur.execute("ALTER SEQUENCE combatant_id_seq RESTART;") 
+        cur.execute("UPDATE combatant SET id = DEFAULT;")
+
+        #Populate combatant table
+        for x in fighters:
+            insert = ("INSERT into combatant (name, species_id, plus_atk,"+
+                    " plus_dfn, plus_hp) VALUES (%s, %s, %s, %s, %s)")
+            cur.execute(insert, (( x[1],x[0],0,0,0  )) )
+        
         for x in range(0, len(fighters)):
             combatant1ID = fighters[x][0]
             combatant1Name = fighters[x][1]
@@ -24,17 +36,20 @@ def main():
             combatant1Attack = fighters[x][3]
             combatant1Defence = fighters[x][4]
             combatant1Health = fighters[x][5]
+            #Sorted out information about fighter 1 for my use
 
             select = "select attack_id from species_attack where species_id = "
             select += str(combatant1ID)
             cur.execute(select)
             attacks = cur.fetchall()
-
+            #Select list of attacks for fighter 1.
+            
             moves1 = []
             for y in attacks:
                 select = "select * from attack where id = " + str(y[0])
                 cur.execute(select)
                 moves1.append(cur.fetchall())
+            #Get more useful information about the attacks for Fighter 1
 
             for z in range(x+1, len(fighters)):
                 combatant2ID = fighters[z][0]
@@ -43,23 +58,24 @@ def main():
                 combatant2Attack = fighters[z][3]
                 combatant2Defence = fighters[z][4]
                 combatant2Health = fighters[z][5]
+                print("Fighter 2 information sorted.")
+
                 select = "select attack_id from species_attack where species_id = "
                 select += str(combatant2ID)
                 cur.execute(select)
                 attacks = cur.fetchall()
+                print("Fighter 2 Attack list Selected.")
 
                 moves2 = []
                 for w in attacks:
                     select = "select * from attack where id = " + str(w[0])
                     cur.execute(select)
                     moves2.append(cur.fetchall())
+                print("Fighter 2 Attack Information Grabbed")
+
 
     except:
         print("Broke")
-
-
-
-def creatureTypes(attacker, defender)
 
 
 if __name__ == '__main__':
