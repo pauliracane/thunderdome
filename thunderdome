@@ -58,20 +58,22 @@ def main():
                 combatant2Attack = fighters[z][3]
                 combatant2Defence = fighters[z][4]
                 combatant2Health = fighters[z][5]
-                print("Fighter 2 information sorted.")
+                #Get information for fighter 2 stored for my use
 
                 select = "select attack_id from species_attack where species_id = "
                 select += str(combatant2ID)
                 cur.execute(select)
                 attacks = cur.fetchall()
-                print("Fighter 2 Attack list Selected.")
+                #Get list of attacks for fighter 2.
 
                 moves2 = []
                 for w in attacks:
                     select = "select * from attack where id = " + str(w[0])
                     cur.execute(select)
                     moves2.append(cur.fetchall())
-                print("Fighter 2 Attack Information Grabbed")
+                #More useful information for fighter 2's attacks.
+
+                #Now to make them fight
 
 
     except:
