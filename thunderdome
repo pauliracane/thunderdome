@@ -74,7 +74,7 @@ def main():
                 #More useful information for fighter 2's attacks.
 
                 #Now to make them fight
-
+                
 
     except:
         print("Broke")
