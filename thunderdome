@@ -1,0 +1,66 @@
+#! /usr/bin/env python3
+
+import psycopg2
+import random
+import sys
+
+def main():
+    con = psycopg2.connect(dbname = sys.argv[1])   
+                                    #Make connection
+                                    #Let Psycop error check that shit.
+    cur = con.cursor()
+
+
+    try:
+        cur.execute("select * from species;")
+        fighters = cur.fetchall()
+
+        random.shuffle(fighters)
+
+        for x in range(0, len(fighters)):
+            combatant1ID = fighters[x][0]
+            combatant1Name = fighters[x][1]
+            combatant1Type = fighters[x][2]
+            combatant1Attack = fighters[x][3]
+            combatant1Defence = fighters[x][4]
+            combatant1Health = fighters[x][5]
+
+            select = "select attack_id from species_attack where species_id = "
+            select += str(combatant1ID)
+            cur.execute(select)
+            attacks = cur.fetchall()
+
+            moves1 = []
+            for y in attacks:
+                select = "select * from attack where id = " + str(y[0])
+                cur.execute(select)
+                moves1.append(cur.fetchall())
+
+            for z in range(x+1, len(fighters)):
+                combatant2ID = fighters[z][0]
+                combatant2Name = fighters[z][1]
+                combatant2Type = fighters[z][2]
+                combatant2Attack = fighters[z][3]
+                combatant2Defence = fighters[z][4]
+                combatant2Health = fighters[z][5]
+                select = "select attack_id from species_attack where species_id = "
+                select += str(combatant2ID)
+                cur.execute(select)
+                attacks = cur.fetchall()
+
+                moves2 = []
+                for w in attacks:
+                    select = "select * from attack where id = " + str(w[0])
+                    cur.execute(select)
+                    moves2.append(cur.fetchall())
+
+    except:
+        print("Broke")
+
+
+
+def creatureTypes(attacker, defender)
+
+
+if __name__ == '__main__':
+    main()
