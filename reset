@@ -1,0 +1,13 @@
+#! /usr/bin/env python3
+import psycopg2
+import sys
+def main():
+    con = psycopg2.connect(dbname = sys.argv[1])
+    cur = con.cursor()
+    cur.execute("DELETE from fight;")
+    
+    con.commit()
+    con.close()
+
+if __name__ == '__main__':
+    main()
