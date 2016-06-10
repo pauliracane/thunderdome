@@ -5,13 +5,12 @@ import random
 import sys
 
 def main():
-    con = psycopg2.connect(dbname = sys.argv[1])   
+        con = psycopg2.connect(dbname = sys.argv[1])   
                                     #Make connection
                                     #Let Psycop error check that shit.
-    cur = con.cursor()
+        cur = con.cursor()
 
 
-    try:
         cur.execute("select * from species;")
         fighters = cur.fetchall()
 
@@ -28,7 +27,7 @@ def main():
             insert = ("INSERT into combatant (name, species_id, plus_atk,"+
                     " plus_dfn, plus_hp) VALUES (%s, %s, %s, %s, %s)")
             cur.execute(insert, (( x[1],x[0],0,0,0  )) )
-        
+
         for x in range(0, len(fighters)):
             combatant1ID = fighters[x][0]
             combatant1Name = fighters[x][1]
@@ -43,7 +42,7 @@ def main():
             cur.execute(select)
             attacks = cur.fetchall()
             #Select list of attacks for fighter 1.
-            
+
             moves1 = []
             for y in attacks:
                 select = "select * from attack where id = " + str(y[0])
@@ -60,6 +59,8 @@ def main():
                 combatant2Health = fighters[z][5]
                 #Get information for fighter 2 stored for my use
 
+                #Reset combatant 1 health
+                combatant1Health = fighters[x][5]
                 select = "select attack_id from species_attack where species_id = "
                 select += str(combatant2ID)
                 cur.execute(select)
@@ -74,11 +75,141 @@ def main():
                 #More useful information for fighter 2's attacks.
 
                 #Now to make them fight
-                
+                fightTime = 0
+                Com1Att = -1
+                Com2Att = -1
 
-    except:
-        print("Broke")
+                while (combatant1Health > 0 and combatant2Health > 0):
+                    if (Com1Att == -1):
+                        Com1Att = random.choice(moves1)
+                        com1AttTimer = Com1Att[0][5]
+                        com1AttTimer = com1AttTimer.seconds
 
+                    if (Com2Att == -1):
+                        Com2Att = random.choice(moves2)
+                        com2AttTimer = Com2Att[0][5]
+                        com2AttTimer = com2AttTimer.seconds
+
+                    com1AttTimer-=1
+                    com2AttTimer-=1
+                    fightTime+=1
+
+                    if (com1AttTimer == 0):
+                        #Attack function.
+                        TypeMultiplier = CalcTypeMult(Com1Att[0][2], 
+                                combatant2Type)
+
+                        DefMinAtt = combatant2Defence - combatant1Attack
+                        if DefMinAtt < 0: DefMinAtt = 0
+                        Damage = TypeMultiplier * random.randint(0, DefMinAtt)
+                        #The above math is wrong for fighting.
+                        #I'm leaving it because it is what was ordered.
+                        TypeMultiplier = CalcTypeMult(combatant1Type,
+                                combatant2Type)
+                        Damage += TypeMultiplier * random.randint(
+                                Com1Att[0][3], Com1Att[0][4])
+
+                        if Damage > 0:
+                            combatant2Health -= Damage
+
+                        Com1Att = -1
+
+                    if (com2AttTimer == 0):
+                        #Attack function.
+                        TypeMultiplier = CalcTypeMult(Com2Att[0][2],
+                                combatant1Type)
+                        DefMinAtt = combatant1Defence - combatant2Attack
+                        if DefMinAtt < 0: DefMinAtt = 0
+                        Damage = TypeMultiplier * random.randint(0, DefMinAtt)
+                        #The above math is wrong for fighting.
+                        #I'm leaving it because it is what was ordered.
+                        TypeMultiplier = CalcTypeMult(combatant2Type,
+                                combatant1Type)
+                        Damage += TypeMultiplier * random.randint(
+                                Com2Att[0][3], Com2Att[0][4])
+
+                        if Damage > 0:
+                            combatant1Health -= Damage
+
+                        Com2Att = -1
+
+                if (combatant2Health <= 0 and combatant1Health <=0):
+                    Winner = "Tie"
+                elif(combatant2Health <=0):
+                    Winner = "One"
+                else:
+                    Winner = "Two"
+                    
+                insert = ("INSERT into fight (combatant_one, combatant_two, "
+                "winner, start, finish) VALUES (%s, %s, %s,TIMESTAMP %s,TIMESTAMP %s )")
+                starttime = "1543-07-13 00:00:00"
+                print(fightTime)
+                fightTime = "1543-07-13 " + str(int(fightTime/3600)) + ":" + str(int(fightTime/60)) + ":" + str(int(fightTime%60))
+                print(fightTime+"\n")
+                q = x + 1
+                r = z + 1
+                cur.execute(insert, (( q,r,Winner, starttime, fightTime )) )
+                                    
+        con.commit()
+        con.close()
+
+
+def CalcTypeMult(AttackerType, DefenderType):
+    '''DO THE WORD STUFF FOR MATH FOR DAMAGE'''
+    multiplier = 1
+    if AttackerType.lower() == "physical":
+        if DefenderType.lower() == "biological":
+            multiplier = 2
+        elif DefenderType.lower() == "chemical":
+            multiplier = 0.5
+
+    elif AttackerType.lower() == "biological":
+        if (DefenderType.lower() == "radioactive" or
+                DefenderType.lower() == "technological"):
+            multiplier = 2
+
+    elif AttackerType.lower() == "radioactive":
+        if (DefenderType.lower() == "physical" or
+                DefenderType.lower() == "mystical"):
+            multiplier = 2
+        elif (DefenderType.lower() == "chemical" or
+                DefenderType.lower() == "technological"):
+            multiplier = 0.5
+
+    elif AttackerType.lower() == "chemical":
+        if DefenderType.lower() == "biological":
+            multiplier = 2
+        elif (DefenderType.lower() == "radioactive" or
+                DefenderType.lower() == "chemical" or
+                DefenderType.lower() == "technological"):
+            multiplier = 0.5
+
+    elif AttackerType.lower() == "technological":
+        if DefenderType.lower() == "radioactive":
+            multiplier = 0.5
+        elif DefenderType.lower() == "chemical":
+            multipler = 2
+
+    elif AttackerType.lower() == "mystical":
+        if (DefenderType.lower() == "biological" or
+                DefenderType.lower() == "radioactive"):
+            multiplier == 2
+        elif (DefenderType.lower() == "physical" or
+                DefenderType.lower() == "chemical" or
+                DefenderType.lower() == "technological" or
+                DefenderType.lower() == "Mystical"):
+            multiplier == 0.5
+
+    elif AttackerType.lower() == "mineral":
+        if DefenderType.lower() == "mineral":
+            multiplier == 0
+
+    return multiplier
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
