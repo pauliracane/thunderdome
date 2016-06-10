@@ -5,6 +5,7 @@ import random
 import sys
 
 def main():
+    try:
         con = psycopg2.connect(dbname = sys.argv[1])   
                                     #Make connection
                                     #Let Psycop error check that shit.
@@ -150,6 +151,13 @@ def main():
                                     
         con.commit()
         con.close()
+
+
+    except IndexError:
+        print("Proper usage of this program is",sys.argv[0]," <psql server>")
+    except:
+        print("The Tournament has ended.  Come back next year.")
+        exit(2)
 
 
 def CalcTypeMult(AttackerType, DefenderType):
