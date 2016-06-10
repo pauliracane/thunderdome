@@ -2,9 +2,9 @@
 
 import psycopg2
 import sys
+import datetime #This is the reason I'm upset.  This right here.
 
 def main():
-    try:
         con = psycopg2.connect(dbname = sys.argv[1])
 
         cur = con.cursor()
@@ -23,17 +23,41 @@ def main():
         
         cur.execute("select * from combatant")
         combatantinfo = cur.fetchall()
-        timeIn = []
-        if ( choice == '1' ):
-            for x in range(0, max(combatantinfo[0][0])):
+
+
+        num = 0
+        for item in combatantinfo:
+            if int(item[0]) > num:
+                num = int(item[0])
+
+        listTimeIn = [45]
+        if ( choice < '3' ):
+            for x in range(0, num):
+                timeIn = 0
                 for each in fightfacts:
-                    print(each)
-                    if (each[0] == x + 1) or each ([1] == x + 1):
-                        timeIn[x] += each[4] - each[3]
-            print(max(timeIn))
-                        
-        elif ( choice == '2' ):
-            pass   
+                    if (each[0] == x + 1) or (each[1] == x + 1):
+                        timeIn += (int(each[4].minute)*60+int(each[4].second)
+                        - int(each[3].minute)*60+int(each[3].second))
+                listTimeIn.append(timeIn)
+        
+            if choice == '1':
+                LongestFighter = max(listTimeIn)
+                x = [i for i, j in enumerate(listTimeIn) if j == LongestFighter]
+
+                for each in combatantinfo:
+                    if (each[0] == x[0]):
+                        print(each[1], "fought for",LongestFighter,"seconds!")
+
+            elif choice == '2':
+                ShortestFighter = min(listTimeIn)
+                x = [i for i, j in enumerate(listTimeIn) if j==ShortestFighter]
+
+                for each in combatantinfo:
+                    if (each[0] == x[0]):
+                        print(each[1],"fought for",ShortestFighter,"seconds!")
+                    if (x[1]):
+                        if (each[0] == x[1]):
+                            print(each[1],"fought for",ShortestFighter,"seconds!")
         elif ( choice == '3' ):
             pass
         elif ( choice == '4' ):
@@ -43,8 +67,6 @@ def main():
         elif ( choice == '6' ):
             pass
 
-    except:
-        pass
 
 #Prompt for input;  "What do you want to see?"
 #1. Fight time:  Longest / Shortest
