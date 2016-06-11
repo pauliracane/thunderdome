@@ -72,13 +72,32 @@ def main():
                     print(each[1], "has the most skills available at",
                             highestnumskills[1])
     
-
-        elif ( choice == '4' ):
-            pass
-        elif ( choice == '5' ):
-            pass
-        elif ( choice == '6' ):
-            pass
+        if(choice >= '4') and (choice <= '6'):
+            ListOfThings = [2]
+            for each in combatantinfo:
+                    ListOfThings.append(0)
+                
+            if (choice == '4'):
+                for x in range(1, len(combatantinfo)):
+                    for thing in fightfacts:
+                        if ((int(thing[0]) == x) and (thing[2] == "One") or
+                        (int(thing[1]) == x) and (thing[2] == "Two")):
+                            ListOfThings[x]+=1
+                print("The Most wins was: ",max(ListOfThings))
+            elif ( choice == '5' ):
+                for x in range(1, len(combatantinfo)):
+                    for thing in fightfacts:
+                        if ((int(thing[1]) == x) and (thing[2] == "One")
+                        or (int(thing[0]) == x) and (thing[2] == "Two")):
+                            ListOfThings[x]+=1
+                print("The most Losses was: ",max(ListOfThings))
+            elif ( choice == '6' ):
+                for x in range(1, len(combatantinfo)):
+                    for thing in fightfacts:
+                        if ((int(thing[0]) == x) and (thing[2] == "Tie")
+                        or (int(thing[1]) == x) and (thing[2] == "Tie")):
+                            ListOfThings[x]+=1
+                print("The most ties was: ",max(ListOfThings))
 
 
 #Prompt for input;  "What do you want to see?"
