@@ -55,9 +55,13 @@ def main():
                 for each in combatantinfo:
                     if (each[0] == x[0]):
                         print(each[1],"fought for",ShortestFighter,"seconds!")
-                    if (x[1]):
-                        if (each[0] == x[1]):
-                            print(each[1],"fought for",ShortestFighter,"seconds!")
+                    try:
+                        if (x[1]):
+                            if (each[0] == x[1]):
+                                print(each[1],"fought for",ShortestFighter,"seconds!")
+                    except:
+                        pass
+
         elif ( choice == '3' ):
             highestnumskills = [0, 0]
             for each in combatantinfo:
